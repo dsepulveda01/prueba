@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   onLogin(): void {
      this.authService.loginEmailUser(this.email, this.password)
      .then((res) => {
-      this.onLoginRedirect(res.user.uid);
+      this.onLoginRedirect(res);
     }).catch(err => console.log('err', err));
   }
 

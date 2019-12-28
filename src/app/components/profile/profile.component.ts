@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { AuthService } from './../../services/auth.service';
 import { UserInterface } from '../../models/user';
 import { DataApiService } from './../../services/data-api.service';
+import { ProfileInterface } from './../../models/profile';
 
 @Component({
   selector: 'app-profile',
@@ -11,28 +12,18 @@ import { DataApiService } from './../../services/data-api.service';
 })
 export class ProfileComponent implements OnInit {
 
+  constructor(private authService: AuthService, private router: ActivatedRoute , private dataApi: DataApiService) { }
+
+  public profileI: ProfileInterface;
   public profiles = [];
   public profile = '';
-
-  public dataId = 'JJo9dJNlQsRxpZaZ7N9b2SaS8ci1';
-  constructor(
-    private authService: AuthService, private router: Router , private dataApi: DataApiService
-  ) {
-    /* const navigation = this.router.getCurrentNavigation();
-    const state = navigation.extras.queryParams;
-    console.log(state);
-    if (state.special) {
-        this.dataId = state.special;
-    } */
-
-  }
-
   user: UserInterface = {
      name: '',
      photoUrl: '',
      description: ''
   }
   public providerId: string = 'null';
+
   ngOnInit() {
     this.authService.isAuth().subscribe(user => {
       if (user) {
@@ -41,10 +32,17 @@ export class ProfileComponent implements OnInit {
         this.providerId = user.providerData[0].providerId;
       }
     });
+    this.dataApi.getAllProfiles().subscribe(profiles => {
+      console.log('Profiles', profiles);
+      this.profiles = profiles;
+    });
 
-    this.dataApi.getIdProfile().subscribe(profiles => {
+
+    const idProfile = 'JJo9dJNlQsRxpZaZ7N9b2SaS8ci1';
+    console.log(idProfile);
+
+    this.dataApi.getIdProfile(idProfile).subscribe(profiles => {
         console.log('PROFILE', profiles);
-        this.profiles = this.profiles;
     });
 
   }

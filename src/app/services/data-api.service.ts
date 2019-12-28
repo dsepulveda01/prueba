@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Observable } from 'rxjs/internal/Observable';
 import { ProfileInterface } from './../models/profile';
+import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +10,30 @@ import { Action } from 'rxjs/internal/scheduler/Action';
 export class DataApiService {
 
   constructor( private afs: AngularFirestore) {
-
+    this.profilesColletion = afs.collection<ProfileInterface>('profiles');
+    this.profiles = this.profilesColletion.valueChanges();
   }
-
-  private profileDoc: AngularFirestoreDocument<ProfileInterface>;
+  private profilesColletion: AngularFirestoreCollection<ProfileInterface>;
+  private profiles: Observable<ProfileInterface[]>;
+  private profilesDoc: AngularFirestoreDocument<ProfileInterface>;
   private profile: Observable<ProfileInterface>;
 
 
+  getAllProfiles() {
+    return this.profiles = this.profilesColletion.snapshotChanges()
+      .pipe(map(changes => {
+        return changes.map(action => {
+          const data = action.payload.doc.data() as ProfileInterface;
+          data.id = action.payload.doc.id;
+          return data;
+        });
+      }));
+  }
 
   getIdProfile(idProfile: string) {
-    return this.profileDoc = this.afs.doc<ProfileInterface>(`profile/${idProfile}`);
-    return this.profile = this.profileDoc.snapshotChanges().pipe(map(action => {
+    console.log(idProfile);
+    this.profilesDoc = this.afs.doc<ProfileInterface>(`profile/${idProfile}`);
+    return this.profile = this.profilesDoc.snapshotChanges().pipe(map(action => {
       if (action.payload.exists  == false) {
         return null;
       } else {
