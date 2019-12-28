@@ -1,0 +1,30 @@
+<section id="profile" class="container">
+  <div class="row mt-5">
+    <div class="col-lg-4 col-sm-6 col-12 main-section text-center">
+      <div class="row user-details">
+        <div class="col-12">
+          <img src="{{user.photoUrl}}" class="rounded-circle img-thumbnail" alt="profile">
+          <h5 *ngIf="providerId != 'password'">{{user.name}}</h5>
+          <p>
+            {{user.email}}
+          </p>
+
+          <hr>
+          <span>{{ user.description }}</span>
+          <div class="profile-stats">
+            <ul>
+              <li><span class="profile-stat-count">164</span> posts</li>
+              <li><span class="profile-stat-count">206</span> following</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <app-time-line></app-time-line>
+  </div>
+</section>
+
+
